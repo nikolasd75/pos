@@ -1,0 +1,112 @@
+<div class="container">
+	<div class="row">
+
+		<div class="col-md-8">
+			<div class="panel panel-primary">
+				<div class="panel-heading">
+					<div class="row">
+						<div class="col-md-4"><span class="panel-title">Products</span></div>
+						<div class="col-md-5">
+							<input type="text" class="form-control" ng-model="searchString" placeholder="Search">
+						</div>
+						<div class="col-md-3">
+							<div class="btn-group">
+								<button ng-class="{active: layout == 'grid'}" ng-click="layout = 'grid'" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-th"></span> Grid</button>
+								<button ng-class="{active: layout == 'list'}" ng-click="layout = 'list'" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-th-list"></span> List</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="panel-body product-list" ng-class="{grid: layout == 'grid'}">
+					<div class="text-warning" ng-hide="products.length">
+						No products found
+					</div>
+					<div class="thumbnail product-list-item" ng-repeat="product in products | searchProducts:searchString" ng-class="{'product-list-item-inactive': product.quantity == 0}" ng-click="addItem(product)">
+						<div class="caption">
+							<div class="product-list-item-name">
+								<h4 class="group inner list-group-item-heading">{{product.name}}</h4>
+							</div>
+							<p ng-show="layout == 'list'" class="group inner list-group-item-text">{{product.description}}</p>
+							<p class="lead product-list-item-price">{{product.price | currency:"€ ":2}}</p>
+							<p>In Stock: {{product.quantity}}</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="col-md-4">
+			<div id="shopping-cart" class="panel panel-primary">
+				<div class="panel-heading">
+					<div class="row">
+						<div class="col-md-4"><span class="panel-title">Order</span></div>
+						<div class="col-md-8"><span>Date: {{order.date | date:'dd/MM/yyyy'}}</span></div>
+					</div>
+				</div>
+				<div class="panel-body">
+					<div class="text-warning" ng-hide="order.products.length">
+						Order items will be displayed here
+					</div>
+					<div class="list-group">
+						<div class="list-group-item shopping-cart-item" ng-repeat="item in order.products">
+							<div class="shopping-cart-item-name">
+								<span>{{item.name}} @ {{item.price | currency:"€":2}}</sapn>
+								</div>
+								<div class="row">
+									<div class="col-sm-6">
+										<div class="input-group input-group-xs">
+											<div class="input-group-btn">
+												<button type="button" class="btn btn-primary btn-xs" ng-click="decreaseItemQuantity(item)">
+													<i class="glyphicon glyphicon-minus"></i>
+												</button>
+											</div>
+											<input readonly type="text" class="form-control"  value="{{item.quantity}}" >
+											<div class="input-group-btn">
+												<button type="button" class="btn btn-primary btn-xs" ng-click="increaseItemQuantity(item)">
+													<i class="glyphicon glyphicon-plus"></i>
+												</button>
+												<button type="button" class="btn btn-default btn-xs" ng-click="removeItem(item)">
+													<i class="glyphicon glyphicon-trash"></i>
+												</button>
+											</div>
+										</div>
+									</div>
+									<div class="col-sm-6">
+										<div class="pull-right"><span class="label label-primary ng-binding"></span>{{item.quantity * item.price | currency:"€ ":2}}</div>
+									</div>
+									<div class="clearfix"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="panel-footer">
+						<h3 class="pull-right"><span class="label label-primary">Total: {{getOrderTotal() | currency:"€ ":2}}</span></h3>
+						<div class="clearfix"></div>
+					</div>
+
+					<div class="panel-footer" ng-show="order.products.length">
+						<input type="text" class="form-control" ng-model="order.customer" placeholder="Customer">
+						<div class="clearfix"></div>
+					</div>
+
+					<div class="panel-footer" ng-show="order.products.length">
+						<div class="pull-right">
+							<span class="btn btn-default btn-marginTop" ng-click="clearOrder()" ng-disabled="!order.products.length">Clear</span>
+							<span class="btn btn-success btn-marginTop" ng-click="submitOrder()" ng-disabled="!order.products.length">Submit</span>
+						</div>
+						<div class="clearfix"></div>
+					</div>
+				</div>
+			</div>
+
+		</div>
+	</div>
+
+	<nav class="navbar navbar-default navbar-fixed-bottom hidden-md hidden-lg" ng-click="scrollTo('shopping-cart')">
+		<div class="container-fluid">
+			<ul class="nav navbar-nav navbar-right">
+				<li><p class="navbar-text">Total: {{getOrderTotal() | currency:"€ ":2}}</p></li>
+			</ul>
+		</div>
+	</nav>

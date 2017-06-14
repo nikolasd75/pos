@@ -1,0 +1,82 @@
+<div class="container">
+
+	<div class="panel panel-primary" ng-hide="selectedOrder">
+		<div class="panel-heading">
+			<span class="panel-title">Orders</span>
+		</div>
+		<div class="panel-body" ng-hide="orders.length">
+			<div class="text-warning" >
+				No orders found
+			</div>
+		</div>
+
+		<div class="table-responsive" ng-show="orders.length">
+			<table class="table">
+				<thead>
+					<tr>
+						<th>ID</th>
+						<th>Customer</th>
+						<th>Date Created</th>
+						<th>Status</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="order in orders">
+						<td>{{ order.id }}</td>
+						<td>{{order.customer}}</td>
+						<td>{{order.dateCreated}}</td>
+						<td>
+							<select ng-model="order.status" ng-options="x for x in statusOptions" ng-change="updateOrder(order, '{{order.status}}')" ></select>
+						</td>
+						<td>
+							<div class="btn-group">
+								<button ng-click="openOrderDetails(order)" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-info-sign"></span></button>
+								<button ng-click="removeOrderConfirm(order)" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-trash"></span></button>
+							</div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+	<div ng-show="orders.length && !selectedOrder" class="center text-center" paging page="pager.page" page-size="pager.pageSize" total="pager.total" paging-action="getOrders(page)"></div>
+
+	<div class="panel panel-primary" ng-show="selectedOrder">
+		<div class="panel-heading">
+			<span class="panel-title">Order ID: {{selectedOrder.id}} - Products</span>
+			<button ng-click="closeOrderDetails()" class="btn btn-default btn-sm pull-right">Close</button>
+			<div class="clearfix"></div>
+		</div>
+
+		<div class="panel-body" ng-hide="selectedOrder.products.length">
+			<div class="text-warning" >
+				No products found
+			</div>
+		</div>
+		
+		<div class="table-responsive" ng-show="selectedOrder.products.length">
+			<table class="table">
+				<thead>
+					<tr>
+						<th>ID</th>
+						<th>Name</th>
+						<th>Description</th>
+						<th>Price</th>
+						<th>Quantity</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="product in selectedOrder.products">
+						<td>{{product.id}}</td>
+						<td>{{product.name}}</td>
+						<td>{{product.description}}</td>
+						<td>{{product.price | currency:"€ ":2}}</td>
+						<td>{{product.quantity}}</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
